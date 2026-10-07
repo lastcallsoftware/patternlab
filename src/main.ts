@@ -38,10 +38,9 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
           <div class="scramble-control"><div><label for="scramble">Scramble it</label><output for="scramble" id="scramble-value">0 / 16 squares</output></div><input id="scramble" type="range" min="0" max="16" value="0" aria-describedby="scramble-hint"><p id="scramble-hint">How much can you change before it gets confused?</p></div>
         </section>
         <section class="network-panel" aria-labelledby="network-title">
-          <div class="panel-heading"><span class="step-number">02</span><h2 id="network-title">Follow the signal</h2><span class="mini-badge">16 → 8 → 4</span></div>
+          <div class="panel-heading"><span class="step-number">02</span><h2 id="network-title">Follow the signal</h2></div>
           <p class="panel-description">Connections change as the network learns.</p>
-          <div class="network-canvas"><svg id="network" viewBox="0 0 460 340" role="group" aria-label="Neural network: 16 inputs, 8 hidden neurons, 4 outputs"></svg></div>
-          <div class="network-labels"><span>The squares</span><span>Learning clues</span><span>The guesses</span></div>
+          <div class="network-canvas"><svg id="network" viewBox="0 0 460 340" role="group" aria-label="Neural network: 16 inputs, 8 hidden neurons, 4 outputs"><g class="network-labels" aria-hidden="true"><text x="28" y="342"><tspan x="28">Grid squares</tspan><tspan class="layer-name" x="28" dy="18">(input layer)</tspan></text><text x="224" y="342"><tspan x="224">Inference</tspan><tspan class="layer-name" x="224" dy="18">(hidden layer)</tspan></text><text x="425" y="342"><tspan x="425">Label guesses</tspan><tspan class="layer-name" x="425" dy="18">(output layer)</tspan></text></g></svg></div>
           <div class="network-legend"><span><i class="legend-line positive"></i>Positive connection</span><span><i class="legend-line negative"></i>Negative connection</span><span><i class="legend-node"></i>More glow = more activity</span></div>
           <p class="neuron-detail" id="neuron-detail">Hover or focus a neuron to explore its connections.</p>
         </section>
@@ -65,14 +64,14 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
       </section>
       <div class="teaching-bar">
         <section class="training-preview" aria-labelledby="training-title"><div class="training-preview-heading"><h2 id="training-title">Training Data</h2></div><div id="training-samples" class="training-samples" role="group" aria-label="Upcoming training examples"></div><div class="training-labels">${LABELS.map((label, index) => `<span style="--category-color:${colors[index]}"><i></i>${label}</span>`).join('')}</div><p id="training-sample-position">Preparing examples…</p><p class="training-processed"><strong id="examples-seen">0</strong> training examples processed</p></section>
-        <div class="loss-panel"><div class="loss-label">Prediction error</div><div class="loss-reading"><strong id="loss" aria-describedby="loss-explanation">—</strong><div><span>Lower is better</span><span id="loss-change">Before training: —</span></div></div><p id="loss-explanation" class="loss-explanation">How far its guesses are from the correct answers across the 1,024 training examples. Confident wrong guesses increase this number most. Lower means it fits those examples better; this is not a percentage.</p><svg id="loss-chart" viewBox="0 0 200 30" preserveAspectRatio="none" role="img" aria-label="Prediction error over training rounds"><path id="loss-area"/><path id="loss-line"/></svg></div>
+        <div class="loss-panel"><div class="loss-label">Prediction error</div><div class="loss-reading"><strong id="loss" aria-describedby="loss-explanation">—</strong><div><span id="loss-change">Before training: —</span></div></div><p id="loss-explanation" class="loss-explanation">How far its guesses are from the correct answers across the 1,024 training examples. Confident wrong guesses increase this number most. Lower means it fits those examples better; this is not a percentage.</p><svg id="loss-chart" viewBox="0 0 200 30" preserveAspectRatio="none" role="img" aria-label="Prediction error over training rounds"><path id="loss-area"/><path id="loss-line"/></svg><div class="chart-caption" id="loss-caption" hidden><span>Before training</span><span id="loss-round-count">0 rounds of practice</span></div></div>
         <div class="teaching-controls"><button class="secondary-button" id="step-button" disabled title="Train on all 1,024 samples, then stop">${playIcon} Train</button><button class="primary-button" id="train-button" disabled aria-label="Train continuously" title="Train continuously, reusing the 1024 training samples">${fastForwardIcon}</button><label class="training-speed-control" for="training-speed">Speed <select id="training-speed"><option value="120">Slow</option><option value="0">Fast</option></select></label><button class="secondary-button" id="reset-button" title="Clear all learning and restore the original connections">Untrain model <span aria-hidden="true">↺</span></button></div>
       </div>
     </section>
     <section class="learning-section" aria-labelledby="learning-title">
       <div class="learning-layout">
-        <div class="comparison-panel"><div class="training-preview-heading"><h2 id="learning-title">Testing Data</h2></div><div id="comparison" class="comparison-grid"></div><div class="training-labels comparison-labels"><span>Color = guess:</span>${LABELS.map((label, index) => `<span style="--category-color:${colors[index]}"><i></i>${label}</span>`).join('')}</div><nav class="test-navigation" aria-label="Browse test grids"><button class="text-button" id="previous-test-page" aria-label="Previous test grids" disabled>← Previous</button><span id="test-page-position" aria-live="polite">1–32 of 256</span><button class="text-button" id="next-test-page" aria-label="Next test grids" disabled>Next →</button></nav><p class="small-note">Click a sample to load it into the Pattern Grid.</p></div>
-        <div class="progress-panel"><div class="metric-label">Test accuracy</div><div class="accuracy-metric"><strong id="accuracy">—</strong><span id="accuracy-change">Before training: —</span></div><p class="testing-description">The percentage of 256 separate test grids it labels correctly. These grids are kept out of automatic training.</p><div class="chart-wrap"><svg id="progress-chart" viewBox="0 0 420 105" preserveAspectRatio="none" role="img" aria-label="Accuracy on unseen grids over training rounds"><path class="chart-guide" d="M5 10H415M5 50H415M5 95H415"/><path id="chart-area"/><path id="chart-line"/></svg></div><div class="chart-caption"><span>Before training</span><span id="round-count">0 rounds of practice</span></div></div>
+        <div class="comparison-panel"><div class="training-preview-heading"><h2 id="learning-title">Testing Data</h2></div><div id="comparison" class="comparison-grid"></div><div class="training-labels comparison-labels">${LABELS.map((label, index) => `<span style="--category-color:${colors[index]}"><i></i>${label}</span>`).join('')}</div><nav class="test-navigation" aria-label="Browse test grids"><button class="text-button" id="previous-test-page" aria-label="Previous test grids" disabled>← Previous</button><span id="test-page-position" aria-live="polite">1–32 of 256</span><button class="text-button" id="next-test-page" aria-label="Next test grids" disabled>Next →</button></nav><p class="small-note">Click a sample to load it into the Pattern Grid.</p></div>
+        <div class="progress-panel"><div class="metric-label">Test accuracy</div><div class="accuracy-metric"><strong id="accuracy">—</strong><span id="accuracy-change">Before training: —</span></div><p class="testing-description">The percentage of 256 separate test grids it labels correctly. These grids are kept out of automatic training.</p><div class="chart-wrap"><svg id="progress-chart" viewBox="0 0 420 105" preserveAspectRatio="none" role="img" aria-label="Accuracy on unseen grids over training rounds"><path class="chart-guide" d="M5 10H415M5 50H415M5 95H415"/><path id="chart-area"/><path id="chart-line"/></svg></div><div class="chart-caption" id="accuracy-caption" hidden><span>Before training</span><span id="round-count">0 rounds of practice</span></div></div>
         <div class="testing-breakdown"><h3>Accuracy by pattern</h3><div class="class-results" id="class-results"></div></div>
       </div>
     </section>
@@ -89,22 +88,23 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
         <ul>
           <li>The first column is the <strong>input layer</strong>, and corresponds directly to the "pixels" in the input grid.</li>
           <li>The third column is the <strong>output layer</strong>, which corresponds to the predicted label for grid in the editor.  The neuron in this column that is most strongly activated indicates the model's prediction.</li>
-          <li>The middle column is the <strong>hidden layer</strong>, which processes the input and computes the prediction.  Notice how each neuron is connected to every input and every output.  The strengths of those connections -- the "weights" and "biases" -- determines the model's behavior.</li>
+          <li>The middle column is the <strong>hidden layer</strong>, which processes the input and computes the prediction.  Notice how each neuron is connected to every input and every output.  The strengths of those connections -- the "weights" and "biases" -- determines the model's behavior.  These are the values that are adjusted during training.</li>
         </ul>
         <p>Initially, the model is untrained, so its guesses are basically random.  As you train it, the guesses should improve.</p></li>
-        <p>In the lower right you can train the model on the current sample in the Pattern Grid.  Select the correct label for it and click the <strong>Use As Training Data</strong> button.  Use with caution, though -- training on a single sample more than once can bias the model towards it and actually make the model <i>less</i> accurate.</p>
+        <!-- <p>In the lower right you can train the model on the current sample in the Pattern Grid.  Select the correct label for it and click the <strong>Use As Training Data</strong> button.  Use with caution, though -- training on a single sample more than once can bias the model towards it and actually make the model <i>less</i> accurate.</p> -->
         <p>If you want, you can expand the <strong>Neuron Detail</strong> panel to see exactly how the value of each neuron is calculated and how it affects the model's predictions.</p>
       <li>
-        <p><strong>Training Data</strong>.  Here you can view the samples used to train the model, and actually train it!  The correct label for each example, determined before training, is indicated by the color of each square.  Use the buttons to the right to train the model.  As you train, you'll see a few things happen:
+        <p><strong>Training Data</strong>.  Here you can view the samples used to train the model, and actually train it!  The correct label for each sample, determined before training, is indicated by its color.</p>
+        <p>Use the buttons to the right to train the model.  As you train it, you'll see a few things happen:</p>
         <ul>
           <li>The accuracy of the guess for the current grid in the Pattern Grid improves.</li>
           <li>The prediction error (technically known as <strong>loss</strong>) in the Training Data section decreases.</li>
           <li>The accuracy of the model's guesses for the test samples in the Testing Data section increases.</li>
         </ul>
-        <p>Note that you can train the model on the same set of training samples multiple times.  In fact, this is often necessary to achieve good performance.</p>
+        <p>Note that you can train the model on the same set of training samples multiple times.  In fact, this is necessary to achieve good performance.  To reach 90% accuracy on the test data, the model requires about 10-12 rounds of training.</p>
       </li>
       <li>
-        <p><strong>Testing Data</strong>.  Here you can view the test samples we use to evaluate the model.  The check or X next to each sample indicates whether the model's prediction was correct.</p>
+        <p><strong>Testing Data</strong>.  Here you can view the test samples used to evaluate the model.  The test samples are separate from the training data, and crucially, the model does not "know" the correct labels for them.  The check or X next to each sample indicates whether the model's prediction for that sample was correct.</p>
         <p>The percentage in the middle shows how accurately the model classifies all the test examples.</p>
         <p>The percentages to the right show the accuracy of the model's predictions for each category.</p>
     </ul>
@@ -401,7 +401,7 @@ function defaultMessage(): void {
   if (failed || traceActive) return;
   const message = element('status-message');
   if (running) message.textContent = '';
-  else if (snapshot?.corrections) message.textContent = `${snapshot.corrections} personal correction${snapshot.corrections === 1 ? '' : 's'} added. Test results may now include grids you have taught it.`;
+  else if (snapshot?.corrections) message.textContent = `${snapshot.corrections} personal correction${snapshot.corrections === 1 ? '' : 's'} added. Training data now includes grid(s) you have taught it.`;
   else message.textContent = '';
 }
 
@@ -474,6 +474,9 @@ element('previous-test-page').addEventListener('click', () => changeTestPage(-1)
 element('next-test-page').addEventListener('click', () => changeTestPage(1));
 
 function renderChart(): void {
+  const hasCompletedRound = history.some(point => point.epoch > 0);
+  element<HTMLElement>('accuracy-caption').hidden = !hasCompletedRound;
+  element<HTMLElement>('loss-caption').hidden = !hasCompletedRound;
   const points = history.map((point, index) => {
     const x = 5 + index / Math.max(1, history.length - 1) * 410;
     const y = 95 - point.accuracy * 85;
@@ -503,7 +506,9 @@ function renderSnapshot(): void {
   });
   element('accuracy').innerHTML = `${Math.round(snapshot.accuracy * 100)}<span>%</span>`;
   element('accuracy-change').textContent = `Before training: ${Math.round(snapshot.baselineAccuracy * 100)}%`;
-  element('round-count').textContent = `${snapshot.epoch} round${snapshot.epoch === 1 ? '' : 's'} of practice`;
+  const roundCount = `${snapshot.epoch} round${snapshot.epoch === 1 ? '' : 's'} of training`;
+  element('round-count').textContent = roundCount;
+  element('loss-round-count').textContent = roundCount;
   element('examples-seen').textContent = snapshot.examplesSeen.toLocaleString();
   element('loss').textContent = snapshot.loss < 0.001 ? '<0.001' : snapshot.loss.toFixed(3);
   element('loss-change').textContent = `Before training: ${snapshot.baselineLoss.toFixed(3)}`;
@@ -558,6 +563,9 @@ function startWorker(): void {
   element('accuracy').textContent = '—';
   element('accuracy-change').textContent = 'Before training: —';
   element('round-count').textContent = '0 rounds of practice';
+  element<HTMLElement>('accuracy-caption').hidden = true;
+  element('loss-round-count').textContent = '0 rounds of practice';
+  element<HTMLElement>('loss-caption').hidden = true;
   element('examples-seen').textContent = '0';
   element('loss').textContent = '—';
   element('loss-change').textContent = 'Before training: —';
