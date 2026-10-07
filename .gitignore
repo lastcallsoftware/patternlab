@@ -4,3 +4,4 @@ artifacts/
 .browser-data/
 playwright-report/
 test-results/
+.sites-checkout/
